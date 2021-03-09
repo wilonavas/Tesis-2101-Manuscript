@@ -1,0 +1,33 @@
+﻿% chapter4.tex
+%==========================================================================
+\chapter{TITLE OF CHAPTER 4}  % En Mayusculas (In Caps)
+
+This is the chapter 4.
+
+\section{How to write tables}
+
+\begin{example}
+A little table (see table \ref{products}) :
+
+
+\begin{table}[ht]
+\vspace{.2in}
+\caption{Benchmark Computational operations for the DCFT vs DFT}
+\begin{center}
+	\begin{tabular}{|c|c|c|c|}
+	  \hline
+	 Samples & DCFT & DFT & Cooley-Tukey FFT \\
+	  \hline
+	  2 & 8 & 4 & 2 \\
+	  4 & 64 & 16 & 8 \\
+	  8 & 512 & 64 & 24 \\
+	  16 & 4096 & 256 & 64 \\
+	  32 & 32768 & 1024 & 160\\
+	  64 & 262144 & 4096 & 384\\
+	  1024 & 1.0737E9 & 1.04858E6 & 10240 \\
+	 \hline
+	\end{tabular}\label{products}
+	\end{center}
+\end{table}
+
+\end{example}

@@ -1,0 +1,69 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% THIS FILE SPECIFIES ALL INFORMATION OF THE AUTHOR AND THE THESIS
+%%
+%% This program may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either version 1.2
+%% of this license or (at your option) any later version.
+%% The latest version of this license is in
+%%   http://www.latex-project.org/lppl.txt
+%% and version 1.2 or later is part of all distributions of LaTeX
+%% version 1999/12/01 or later.
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% This is the definition of the work thesis and the packages that the Thesis 
+%% will gonna use
+
+\documentclass[12pt,Bold,Justify,letterpaper]{uprmclass}
+\usepackage[dvips,final]{graphicx}
+%\usepackage[spanish,activeacute]{babel}
+\usepackage{amssymb,amsmath,amsthm,mathrsfs,keyval,color,psfrag,multirow,lscape}		%,overcite}
+%\usepackage{calrsfs} 			% beatiful curly letters
+\usepackage[bookmarks=true,bookmarksopen=true,breaklinks=true,letterpaper=true,pdftitle={DCFFT},plainpages=false,pdfauthor={StudentRUM},colorlinks=true,hypertexnames=false,citecolor=blue,linkcolor=blue,filecolor=blue]{hyperref}
+%\usepackage[pdfpagemode={UseOutlines},bookmarks=true,bookmarksopen=true,bookmarksopenlevel=0,bookmarksnumbered=true,hypertexnames=false,colorlinks=true,linkcolor={blue},citecolor={blue},urlcolor={cyan},pdfstartview={FitV},unicode,breaklinks=true,linktocpage]{hyperref}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{hypernat}
+\usepackage{graphics}
+\usepackage{rotating}   	% Package for rotate tables
+%\usepackage{subfigure}  	% If you want subfigures
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% DEFINE STUDENT AND THESIS SPECIFIC INFO   %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\SetFullName{William J. Navas-Auger}
+\SetThesisType{Dissertation}
+\SetThesisTypes{Disertaci\'on}
+\SetDegreeType{Doctor of Philosophy}		
+\SetDegreeTypes{Doctor en Filosof\'ia}
+\SetSpecialty{Computing and Information Science and Engineering}
+\SetGradMonth{May}
+\SetGradMes{Mayo}
+\SetGradYear{2021}
+\SetDepartment{Computer Science and Engineering}
+\SetDepartmento{Ciencia de Computadoras e Ingenier\'ia}
+\SetChair{Vidya Manian}
+\SetTitle{SPATIAL ADAPTIVE TENSOR FACTORIZATION FOR HYPERSPECTRAL IMAGE UNMIXING}
+\SetTitlesp{Factorizacion Espacial-Adaptiva de Tensores para la separacion de Im\'agenes Hiperespectrales}
+
+%% Signature page members
+% First Member Graduate Commitee
+\SetNamea{Emmanuel Arzuaga}		
+\SetDegreea{Ph.D}
+% Second Member Graduate Commitee
+\SetNameb{Heidi Sierra}
+\SetDegreeb{Ph.D}
+% President Graduate Commitee (Normally Chairman)
+\SetNamec{Vidya Manian}			
+\SetDegreec{Ph.D}
+% Graduate Studies Representative
+\SetNamed{Graduate Studies Representative}
+\SetDegreed{Ph.D.}
+% Chairperson of the Department
+\SetNameChairDep{Emanuel Arzuaga}
+\SetDegreeChairDep{Ph.D}
+
+% This file contents all the commands of style defined for the thesis such as theorems,
+% definitions, etc... (if you have no idea what is it. Don't modify anything)
+% def.tex is a file used to define special enviroments such as a proof of a theorem.
+\input{defs.tex}   

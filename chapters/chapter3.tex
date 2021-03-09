@@ -1,0 +1,130 @@
+﻿% chapter3.tex
+%==========================================================================
+\chapter{TITLE OF CHAPTER 3} % En Mayusculas (In Caps)
+
+\section{Just some about formulas}
+
+Use of \fn{equation*}:
+
+\begin{equation*}
+a=b
+\end{equation*}
+
+Use of \fn{equation}:
+
+\begin{equation}
+a=b
+\end{equation}
+
+Use of \fn{split} and \fn{equation}:
+
+\begin{equation}\label{xx}
+\begin{split}
+a& =b+c-d\\
+& \quad +e-f\\
+& =g+h\\
+& =i
+\end{split}
+\end{equation}
+
+Use of \fn{multline}:
+
+\begin{multline}
+a+b+c+d+e+f+b+c+d+e+f+b+c+d+e+f\\
++b+c+d+e+f+b+c+d+e+f+i+j+k+l+m+n
+\end{multline}
+
+Use of \fn{gather}:
+
+\begin{gather}
+a_1=b_1+c_1\\
+a_2=b_2+c_2-d_2+e_2 \label{eq:D}
+\end{gather}
+
+Use of \fn{align}:
+
+\begin{align}
+a_1& =b_1+c_1\\
+a_2& =b_2+c_2-d_2+e_2
+\end{align}
+
+Other uses for \fn{align}:
+
+\begin{align}
+a_{11}& =b_{11}&
+a_{12}& =b_{12}\\
+a_{21}& =b_{21}&
+a_{22}& =b_{22}+c_{22}
+\end{align}
+
+Use of \fn{flalign*}:
+
+\begin{flalign*}
+a_{11}& =b_{11}&
+a_{12}& =b_{12}\\
+a_{21}& =b_{21}&
+a_{22}& =b_{22}+c_{22}
+\end{flalign*}
+
+Use of \cn{equation} and \cn{split}:
+
+\begin{equation}\label{e:barwq}\begin{split}
+H_c&=\frac{1}{2n} \sum^n_{l=0}(-1)^{l}(n-{l})^{p-2}
+\sum_{l _1+\dots+ l _p=l}\prod^p_{i=1} \binom{n_i}{l _i}\\
+&\quad\cdot[(n-l )-(n_i-l _i)]^{n_i-l _i}\cdot \Bigl[(n-l
+)^2-\sum^p_{j=1}(n_i-l _i)^2\Bigr].
+\end{split}\end{equation}
+
+Use of \cn{align} to align textual annotations:
+
+\begin{align}
+x& = y_1-y_2+y_3-y_5+y_8-\dots
+&& \text{by \eqref{eq:C}}\\
+& = y \circ y^* && \text{by \eqref{eq:D}}\\
+& = y(0) y && \text {by Axiom 1.}
+\end{align}
+
+Use of \cn{aligned} to control placement of inner alignments:
+
+\begin{equation*}
+\begin{aligned}
+\alpha&=\alpha\alpha\\
+\beta&=\beta\beta\beta\beta\beta\\
+\gamma&=\gamma
+\end{aligned}
+\qquad\text{versus}\qquad
+\begin{aligned}[t]
+\delta&=\delta\delta\\
+\eta&=\eta\eta\eta\eta\eta\eta\\
+\varphi&=\varphi
+\end{aligned}
+\end{equation*}
+
+``Cases" constructions:
+
+\begin{equation}\label{eq:C}
+P_{r-j}=
+\begin{cases}
+0& \text{if $r-j$ is odd},\\
+r!\,(-1)^{(r-j)/2}& \text{if $r-j$ is even}.
+\end{cases}
+\end{equation}
+
+Use of \cn{smash} and \cn{vphantom} to control vertical size:
+
+\newcommand\ip[2]{\langle #1 \/ | #2 \/\rangle}
+\newcommand\Ip[2]{\left\langle{\arraycolsep=0pt %
+\begin{array}{c|c}#1\/\,&\,#2\/\end{array}}%
+\right\rangle}
+\newcommand\Ipd[2]{\left\langle{\arraycolsep=0pt %
+\begin{array}{c|c}\displaystyle#1\/\,&\,\displaystyle#2\/\end{array}}%
+\right\rangle}
+\newcommand\conj[1]{\overline{#1}}
+\begin{align*}
+\Ipd{ u\: }{\: \smash{\sum_{i=1}^n F(e_i,v) e_i }\vphantom{\sum}}
+&= \sum_{i=1}^n F(e_i,v) \ip{ u }{ e_i } \\
+&= \sum_{i=1}^n \ip{ u }{ e_i } F(e_i,v) \\
+&= \sum_{i=1}^n \conj{\ip{ e_i }{ u }} F(e_i,v) \\
+&= F \biggl( \sum_{i=1}^n \ip{ e_i }{ u } e_i,v\biggr) = F( u, v
+),
+\end{align*}

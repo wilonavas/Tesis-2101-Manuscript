@@ -1,0 +1,49 @@
+﻿\documentclass[12pt]{clssty/uprmthesis}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Adjust the two following length parameters until  %%
+%% the left and top margins of the page are properly %%
+%% displayed.                                        %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\addtolength{\hoffset}{0pt}
+\addtolength{\voffset}{0pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% DO NOT edit/modify/change anything below this     %%
+%% point.                                            %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagestyle{myheadings}
+\setlength{\unitlength}{1sp}
+\newcounter{textheight}
+\newcounter{textwidth}
+\newcounter{headsep}
+\newcounter{headheight}
+\newcounter{dimension}
+\setcounter{textheight}{\textheight}
+\setcounter{dimension}{\textheight}
+\addtocounter{dimension}{\footskip}
+\setcounter{textwidth}{\textwidth}
+\setcounter{headsep}{\headsep}
+\setcounter{headheight}{\headheight}
+\setlength{\parindent}{0pt}
+\begin{document}
+\hspace*{1in}\vspace*{-\baselineskip}\vspace*{-\topskip} \\
+\begin{picture}(0,0)
+\put(0,\value{headsep}){%
+     \framebox(\value{textwidth},\value{headheight}){}}
+\put(0,-\value{textheight}){%
+     \framebox(\value{textwidth},\value{textheight}){}}
+\put(0,-\value{dimension}){\line(1,0){\value{textwidth}}}
+\end{picture}
+
+\vfill
+\mbox{}\hfill
+\begin{minipage}{0.5\textwidth}
+The current value of \verb=\hoffset= is \the\hoffset \\
+The current value of \verb=\voffset= is \the\voffset \\[1.0in]
+Adjust \verb=\hoffset= until the left edge of this box is 1.5~inches
+from the left edge of the page. Adjust \verb=\voffset= until the top
+edge of this box is 1.0~inch from the top edge of the page.
+\end{minipage}
+\hfill\mbox{}
+\vfill
+\mbox{}
+\end{document}
