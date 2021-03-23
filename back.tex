@@ -1,16 +1,18 @@
-﻿%%       Make List of References
+%%       Make List of References
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Note: I use BibTeX, but have coded in thebibliography environment
 %%       to use for this example only.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% unstr is the same as plain, but entries appear in the order of citation.
+\bibliographystyle{unsrt}
+% Use the References.bib file
+\bibliography{referencefiles/refs} 		
 
-\bibliographystyle{unsrt} 									% unstr is the same as plain, but entries appear in the order of citation.
-\bibliography{referencefiles/references} 		% Use the References.bib file
+\backmatter
 
-\backmatter %
-
-\biography{										% Add the Biography pages if you want.
+% Add the Biography pages if you want.
+\biography{
 \input{backfiles/Biography.tex}			
 }
 
@@ -22,14 +24,14 @@
 \pagestyle{empty}
 \begin{flushleft}
 \Title\\*[\BaseDiff\baselineskip]
-\FullName\\%
-(787) XXX-XXXX\\%
-Department of \Department \\%
-Chair: \Chair\\%
-Degree: \DegreeType\\%
-Graduation Date: \GradMonth~\GradYear%
+\FullName\\
+(787) XXX-XXXX\\
+Department of \Department \\
+Chair: \Chair\\
+Degree: \DegreeType\\
+Graduation Date: \GradMonth~\GradYear
 \end{flushleft}
-\GoDouble%
+\GoDouble
 \input{backfiles/GeneralAudienceAbstract.tex}
 \end{simpleenv}
 

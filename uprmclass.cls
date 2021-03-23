@@ -240,10 +240,12 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%   Formatting Section Headings                   %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand*{\justifyheading}{\raggedright}
+
 \ifthenelse{\boolean{RS@BfSet}}%
-{\sectionfont{\normalsize\normalfont\singlespace\centering\bfseries}%
- \subsectionfont{\normalsize\normalfont\singlespace\bfseries}%
- \subsubsectionfont{\normalsize\normalfont\singlespace\bfseries}%
+{\sectionfont{\normalsize\normalfont\singlespace\bfseries\justifyheading}%
+ \subsectionfont{\normalsize\normalfont\singlespace\bfseries\justifyheading}%
+ \subsubsectionfont{\normalsize\normalfont\singlespace\bfseries\justifyheading}%
  \paragraphfont{\normalsize\normalfont\bfseries}%
  \renewcommand{\paragraph}[1]{\@paragraph{#1.}}%
  \newcommand{\@paragraph}{\@startsection{paragraph}{4}{\parindent}%
@@ -529,19 +531,27 @@ Member, Graduate Committee\\*[\BaseDiff\baselineskip]%
 %%%%%%%%%%%%
 \rule{7.5cm} {0.01cm} \hfill \rule{3cm}{0.01cm}\\%
 \Namec , \Degreec \hfill \makebox[3cm][c]{Date}\\
-President, Graduate Committee\\*[\BaseDiff\baselineskip]%
+Member, Graduate Committee\\*[\BaseDiff\baselineskip]%
 %%%%%%%%%%%%
 \rule{7.5cm} {0.01cm} \hfill \rule{3cm}{0.01cm}\\%
-\Named , \Degreed \hfill \makebox[3cm][c]{Date}\\
-Representative of Graduate Studies\\*[\BaseDiff\baselineskip]%
+\NamePres , \DegreePres \hfill \makebox[3cm][c]{Date}\\
+President, Graduate Committee\\*[\BaseDiff\baselineskip]%
 %%%%%%%%%%%%
+%% Grad Studies Rep
+\rule{7.5cm} {0.01cm} \hfill \rule{3cm}{0.01cm}\\%
+\NameRep \hfill \makebox[3cm][c]{Date}\\
+\bigskip
+\bigskip
+
+%%%%%%%%%%%
 \rule{7.5cm} {0.01cm} \hfill \rule{3cm}{0.01cm}\\%
 \NameChairDep , \DegreeChairDep \hfill \makebox[3cm][c]{Date}\\
 CISE Program Coordinator\\*[\BaseDiff\baselineskip]%
 %%%%%%%%%%%% End members of your committee %%%%%%%%%%%%
 }
-    \setboolean{SetDSpace}{true}%
-    \clearpage}
+
+\setboolean{SetDSpace}{true}%
+\clearpage}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%        APPENDICES PAGE                          %
@@ -723,36 +733,50 @@ CISE Program Coordinator\\*[\BaseDiff\baselineskip]%
 \newcommand*{\SetChair}[1]{\renewcommand*{\Chair}{#1}}%
 \newcommand*{\Chair}{UNDEFINED Chair}%
 \@onlypreamble{\SetChair}%
+
 \newcommand*{\SetNamea}[1]{\renewcommand*{\Namea}{#1}}%
 \newcommand*{\Namea}{UNDEFINED Graduate Commitee a}%
 \@onlypreamble{\SetNamea}%
 \newcommand*{\SetDegreea}[1]{\renewcommand*{\Degreea}{#1}}%
 \newcommand*{\Degreea}{UNDEFINED Degree member a}%
 \@onlypreamble{\SetDegreea}%
+
 \newcommand*{\SetNameb}[1]{\renewcommand*{\Nameb}{#1}}%
 \newcommand*{\Nameb}{UNDEFINED Graduate Commitee b}%
 \@onlypreamble{\SetNameb}%
 \newcommand*{\SetDegreeb}[1]{\renewcommand*{\Degreeb}{#1}}%
 \newcommand*{\Degreeb}{UNDEFINED Degree member b}%
 \@onlypreamble{\SetDegreeb}%
+
 \newcommand*{\SetNamec}[1]{\renewcommand*{\Namec}{#1}}%
 \newcommand*{\Namec}{UNDEFINED Graduate Commitee c}%
 \@onlypreamble{\SetNamec}%
 \newcommand*{\SetDegreec}[1]{\renewcommand*{\Degreec}{#1}}%
 \newcommand*{\Degreec}{UNDEFINED Degree member c}%
 \@onlypreamble{\SetDegreec}%
-\newcommand*{\SetNamed}[1]{\renewcommand*{\Named}{#1}}%
-\newcommand*{\Named}{UNDEFINED Graduate Commitee d}%
-\@onlypreamble{\SetNamed}%
-\newcommand*{\SetDegreed}[1]{\renewcommand*{\Degreed}{#1}}%
-\newcommand*{\Degreed}{UNDEFINED Degree member d}%
-\@onlypreamble{\SetDegreed}%
+
+\newcommand*{\SetNamePres}[1]{\renewcommand*{\NamePres}{#1}}%
+\newcommand*{\NamePres}{UNDEFINED Graduate Commitee president}%
+\@onlypreamble{\SetNamePres}%
+\newcommand*{\SetDegreePres}[1]{\renewcommand*{\DegreePres}{#1}}%
+\newcommand*{\DegreePres}{UNDEFINED Degree president}%
+\@onlypreamble{\SetDegreePress}%
+
+\newcommand*{\SetNameRep}[1]{\renewcommand*{\NameRep}{#1}}%
+\newcommand*{\NameRep}{UNDEFINED Graduate Commitee Rep}%
+\@onlypreamble{\SetNameRep}%
+\newcommand*{\SetDegreeRep}[1]{\renewcommand*{\DegreeRep}{#1}}%
+\newcommand*{\DegreeRep}{UNDEFINED Degree member Rep}%
+\@onlypreamble{\SetDegreeRep}%
+
+
 \newcommand*{\SetNameChairDep}[1]{\renewcommand*{\NameChairDep}{#1}}%
 \newcommand*{\NameChairDep}{UNDEFINED Graduate Chairperson Department}%
 \@onlypreamble{\SetNameChairDep}%
 \newcommand*{\SetDegreeChairDep}[1]{\renewcommand*{\DegreeChairDep}{#1}}%
 \newcommand*{\DegreeChairDep}{UNDEFINED Degree Chairperson Department}%
 \@onlypreamble{\SetDegreeChairDep}%
+
 %%    Adding personal notes to your text
 \newboolean{ShowNotes}% Used to display private notes.
 \setboolean{ShowNotes}{false}%
@@ -897,6 +921,8 @@ CISE Program Coordinator\\*[\BaseDiff\baselineskip]%
 %% Disabling some unused commands
 \renewcommand{\author}{}
 \renewcommand{\date}{}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%  UPRM Thesis Local Configuration                %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

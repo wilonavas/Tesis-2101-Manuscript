@@ -27,6 +27,14 @@
 \usepackage{rotating}   	% Package for rotate tables
 %\usepackage{subfigure}  	% If you want subfigures
 
+% Configure Math Caligraphy bold command
+\DeclareMathAlphabet{\mathbcal}{OMS}{cmsy}{b}{n}
+
+% Configure EulerScript font to replace Script
+\usepackage[mathscr]{euscript}
+% Configure Math Script bold command
+\DeclareMathAlphabet{\mathbscr}{U}{eus}{b}{n}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% DEFINE STUDENT AND THESIS SPECIFIC INFO   %%
@@ -43,7 +51,7 @@
 \SetDepartment{Computer Science and Engineering}
 \SetDepartmento{Ciencia de Computadoras e Ingenier\'ia}
 \SetChair{Vidya Manian}
-\SetTitle{SPATIAL ADAPTIVE TENSOR FACTORIZATION FOR HYPERSPECTRAL IMAGE UNMIXING}
+\SetTitle{SPATIAL LOW-RANK TENSOR FACTORIZATION FOR HYPERSPECTRAL IMAGE UNMIXING}
 \SetTitlesp{Factorizacion Espacial-Adaptiva de Tensores para la separacion de Im\'agenes Hiperespectrales}
 
 %% Signature page members
@@ -51,14 +59,17 @@
 \SetNamea{Emmanuel Arzuaga}		
 \SetDegreea{Ph.D}
 % Second Member Graduate Commitee
-\SetNameb{Heidi Sierra}
+\SetNameb{Heidy Sierra}
 \SetDegreeb{Ph.D}
-% President Graduate Commitee (Normally Chairman)
-\SetNamec{Vidya Manian}			
+% Third Member Graduate Commitee
+\SetNamec{Wilson Rivera Gallego}
 \SetDegreec{Ph.D}
+% President Graduate Commitee (Normally Chairman)
+\SetNamePres{Vidya Manian}			
+\SetDegreePres{Ph.D}
 % Graduate Studies Representative
-\SetNamed{Graduate Studies Representative}
-\SetDegreed{Ph.D.}
+\SetNameRep{Graduate Studies Representative}
+\SetDegreeRep{ }
 % Chairperson of the Department
 \SetNameChairDep{Emanuel Arzuaga}
 \SetDegreeChairDep{Ph.D}
