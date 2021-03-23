@@ -1,0 +1,232 @@
+% Introduction.tex
+%==========================================================================
+\chapter{Introduction}  % En Mayusculas (In Caps)
+Remote sensing is the process of gathering information about a distant object by means of a sensor that collects signals emitted or reflected by the object.  A source, such as the sun, emits radiation across a wide band of the electromagnetic spectrum and interacts with the materials or mixtures of them.  The material will transmit, absorb, or reflect that energy.  In addition, all materials also emit blackbody radiation as a function of their temperature which would be measured by the sensors.  Measuring the energy of these signals in discrete frequency bands produces a spectral signature for every pixel captured; which can then be used to extract information relevant to a range of disciplines.  As spatial resolution and the number of bands increases, the job of analyzing them to extract usable information becomes more computationally demanding.  Applications abound for this kind of data.  Some of the fields covered are atmospheric studies, ecology, geology and soils, hydrology, biodiversity, environmental hazards, mineral exploration, and agriculture among others. 
+\section{Problem Statement}
+An important problem in remote sensing is the identification of materials based on their spectral signature.  When a pixel is recorded by the sensor, it can gather reflected radiation from more than one material or substance.  Often the sensing instrument does not have sufficient spatial resolution to capture individual materials, or the substances in question are mixed uniformly.  In either case, we can infer that mixed pixels have spectra that are some combination of the individual substances.  We are interested in solving the inverse problem of identifying the signal's constituents and their relative abundance.  
+
+Hyperspectral images (HSI) are 3-dimensional data cubes with two spatial dimensions and one spectral dimension with hundreds frequency bands.  If we consider changes through time of the same regions, that would add yet another dimension \cite{goenaga_unmixing_2013} \cite{reyes_change_2017}.  In order to apply traditional signal processing algorithms, multidimensional arrays are scanned and unfolded usually along the spectral dimension.  This treatment sometimes ignores spatial relationships or requires localized analysis and subsequent aggregation to account for spatial-spectral interactions.  Spatial structures can also aid in the identification of materials or their relative abundance as it is expected that materials of the same type have some spatial correlation.
+
+Applying these algorithms to these large datasets on their native domain imposes an additional burden on computation; hence the necessity for efficient parallel processing.  However, with increased availability of multi-core CPU’s, and GPU accelerators with thousands of floating point units, implementations are practical.
+\section{Objectives}
+	\begin{raggedright}
+		\textbf{General Objectives}
+		\begin{enumerate}
+			\item Develop a spatial-spectral-temporal tensor decomposition for hyperspectral
+		images
+			\item Apply the tensor decomposition for hyperspectral image unmixing.
+			\item Evaluate the performance of parallel implementations.
+		\end{enumerate}
+		\textbf{Specific Objectives}
+		\begin{enumerate}
+			\item Design or modify a state of the art tensor decomposition algorithm to improve
+			endmember extraction using spatial information.
+			\item Construct Tensor formulation that takes into account spatial-spectral interactions
+			\item Select a programming model that works across GPU platforms.
+			\item Evaluate space and time complexity of the parallel implementations
+			\item Evaluate scalability of the implementation 
+		\end{enumerate}
+	\end{raggedright}
+\section{Contribution}
+In this work, we explore spectral unmixing using non-negative tensor factorizations (NTF) using Canonical Polyadic decomposition (CPD) and Block Term Decomposition (BTD).  We introduce a workflow for hyperspectral image unmixing that exploits the spatial-spectral structure of NTFs and test it on synthetic and real datasets. 
+
+%==========================================================================
+% chapter2
+%==========================================================================
+\chapter{Literature Review}
+\section{Remote Sensing}
+A minimal remote sensing system, consists of a source, a distant subject, and a sensor.  The source generates a signal that is modulated by the subject and recorded by the sensor.  A passive earth observing system relies on the sun as a source and has the earth's surface as target.  The sun's radiation interacts with the atmosphere and surface and is collected by the sensor.  The sensors in question are imaging sprectrometers that measure electromagnetic radiation at discrete frequency ranges.  A multispectral sensor such as LANDSAT (citation) has frequency bands in the tens whereas a hyperspectral sensors such as AVIRIS (citation) have hundreds.
+
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=4in]{figs/RemoteSensingSystem}
+		\caption{A remote sensing system overview \cite{landgrebe_signal_2003}}
+		\label{fig:RemoteSensingSystem}
+	\end{center}
+\end{figure}
+
+\section{Linear Mixing Model}
+A pervasive problem in remote sensing is the identification of materials based on their spectral signature.  When a pixel is recorded by the sensing apparatus, it can gather reflected radiation from more than one material or substance.  Mixing occurs due to insufficient spatial resolution for the sensor to capture individual materials or the substances in question are mixed uniformly.  In either case, mixed pixels have spectra is the result the individual substance's combined spectra.  Spectral unmixing \cite{keshava_spectral_2002} refers to the process of separating a sensed signal such that the multiple source signals are identified along with the proportions by which they are mixed.  The source or 'pure' signals are called \textit{endmembers}, and the proportions are fractional \textit{abundances}.
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=6in]{figs/Keshava-LinearAndNonLinearMix}
+		\caption{Linear and Non-Linear Mixing \cite{keshava_spectral_2002}}
+		\label{fig:LinearAndNonLinearMix}
+	\end{center}
+\end{figure}
+
+The simplest model is the the Linear Mixing Model (LMM).  It assumes the sensed signals are a linear combination of endmembers scaled by their relative abundances plus some noise additive noise.  Alternatively, a non-linear mixing model takes into account additional interactions between materials.  Some examples of non-linear mixing models are found in fine-grained mixtures of minerals and vegetation in below forest canopies where specific models to those conditions have proven accurate.  The LMM is considered useful for cases where each material's reflected spectral signature reaches the sensor mostly unperturbed.  That is, if interactions such are reflections or scattering with other materials are negligible.  Figure \ref{fig:LinearAndNonLinearMix}-(a) shows light reflected from different materials reaching the sensor as a linear mix while \ref{fig:LinearAndNonLinearMix}-(b) show internal scatering on a mixure of materials producing a non-linear mix.
+
+The LMM can be expressed in matrix form as shown on eq. \eqref{eq:LMM}.
+\begin{align}
+	&\mathbf{Y}=\mathbf{SA+W} \label{eq:LMM} \\
+	s.\ t.\quad &\mathbf{A\geq0}; \label{eq:ANC} \\
+	&\mathbf{A}^T\mathbf{1}_{R} =\mathbf{1}_{N} \label{eq:ASC}
+\end{align}
+where $\mathbf{Y} \in \mathbb{R}^{K \times N}$ represents a hyperspectral image (HSI) with  $K$ bands and $N$ pixels, $\mathbf{S} \in \mathbb{R}^{K \times R}$ is the endmember matrix with $R$ endmembers, $\mathbf{A} \in \mathbb{R}^{R \times N}$ is the abundance matrix, and $\mathbf{W} \in \mathbb{R}^{K \times N}$ accounts for additive noise. $\mathbf{1}_N$ denotes a column vector of length $N$ with all ones.
+
+Two important constraints are present.  Since \textbf{S} and \textbf{A} are reflectance values, they are all positive.  The abundances, being fractions of the total reflectance, are positive as well and shall add up to one.  These are formally known as the abundance non-negativity constraint (ANC) shown in the inefquality \eqref{eq:ANC}, and the abundance sum-to-one constraint (ASC) shown on \eqref{eq:ASC}.  The ASC can be relaxed to be between one and zero when not all endmembers have been accounted for.    
+
+\section{Spectral Unmixing}
+OFFTOPIC=============================
+
+Spectral unmixing has parallels with blind source separation
+Non-Negative Matrix factorization has been investigated in the context of blind source separation of EEG\\
+=====================================
+
+There are numerous approaches to estimate S and A given a hyperspectral image Y.  Unmixing can be done by estimating the endmemebers based on transformations of the original data set into a lower dimensional space.  Having an estimate of S, then the abundance can be computed by an inversion based on least squares approximation.  This is not straight forward.  The actual endmembers may be closely correlated, making matrix inversion ill-conditioned.  Signals of interest may also be small compared to noise, making separation impossible.  
+
+Another approach is to jointly determine \textbf{S} and \textbf{A} as a factorization with ANC and ASC constraints.  Those formulations are posed as an optimization problem that minimizes the Frobenius norm difference between \textbf{Y} and \textbf{SA}.  Lastly we take a look at In the following sections we will briefly discuss the most relevant algorithms for endmember estimation, abundance computation given endmembers, and non negative factorizations.
+
+A workflow for spectral unmixing based on endmember estimation can be divided into three steps:
+\begin{description}
+	\item[Dimensionality Reduction:] is used to reduce computational load.  Principal Components Analysis (PCA), Singular Value Decomposition (SVD), or other variants may be used.
+	\item[Endmember Determination] Find a set of representative endmembers.
+	\item[Inversion:] Estimate fractional abundances by an inversion method such as least-squares estimation.
+\end{description}
+
+\section{Endmember Detection Algorithms}
+\subsection{VCA}
+\subsection{NFinder}
+\subsection{Max Volume}
+\section{Non-negative matrix factorization}
+The goal of non-negative matrix and tensor factorization is to separate high-dimensional data into meaningful, components \cite{lee_algorithms_2000}.  The hypothesis is that latent features of the original non-negative data set can be extracted in an additive model where components are also non-negative, preferably sparse and unique.  Given these constraints, the spectral unmixing problem is an instance of the non-negative matrix factorization problem (NMF).  Using the notation in [Xhou-2014], the NMF for non-negative matrix $\mathbf{Y} \in \mathbb{R}^{M \times N}$ is modeled as:
+\begin{equation}\label{eq:NMF}
+	\mathbf{Y = AB^T}
+\end{equation}
+where $\mathbf{A} \in \mathbb{R}^{N\times R}$
+is the basis matrix, and 
+$\mathbf{B} \in \mathbb{R}^{M\times R}$ 
+is the encoding matrix.  It is clear that \textbf{A}, $\mathbf{B}^T$, and $\mathbf{E}$ in Equation \eqref{eq:NMF} are analogous to S, A, and W, respectively in Equation (2).  Under the assumption that the non-negative Y is the sum of linear combinations of non-negative parts, one can hypothesize that a factorization exists where we can recover the “parts” (basis), and how to combine them (encoding matrix) in order to approximate Y.
+Although NMF is not generally unique, \cite{donoho_when_2004} elaborates on the sufficient conditions where it is.  An in-depth analysis of uniqueness for NMF can be found in \cite{sidiropoulos_} and \cite{huang_non-negative_2014}.  An informal geometric description of uniqueness and its relationship to sparsity goes as follows.  Consider Y as a data cloud consisting of \textit{N} data points in an M dimensional space and dataset can be enclosed in a cone \textbf{A} outlined by R edges.  We can then shrink the cone and make it smaller so the edges just touch one or more points.  The smallest cone that still encloses the data, is likely to be unique.  The edges of the cone, called extreme rays, are the basis vectors in the columns of \textbf{A}.  
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=4in]{figs/Zhou-GeometricEndmembers}
+		\caption{Three-dimensional simplex showing 1-sparse extreme rays forming a conic hull that encloses all points on the dataset \cite{zhou_nonnegative_2014}}
+		\label{fig:Zhou-GeometricEndmembers}
+	\end{center}
+\end{figure}
+Figure 2. 
+
+Referring back to the spectral unmixing application, extreme rays are assumed to be endmembers and since all other points lie on or within the cone, they can be expressed as fractional, positive linear combinations of \underline{endmembers}.
+
+NMF is an optimization problem where we want to find the best approximation of Y by minimizing a cost function such as $ cost = (Y-(AB)^T )F^2. $ Some of the most cited numerical algorithms to solve NMF are described in the following sections.
+
+\subsection{Alternating Nonnegative Least Squares}
+Alternating Nonnegative Least Squares (ANLS) is an iterative optimization algorithm used to solve NMF problems which can be formulated as follows:
+$ equation $
+where $||\cdot||_F^2$ the Frobenius norm.  This problem is not convex and its complexity is NP-hard [19].  Nevertheless, the approximation can still be solved iteratively by solving for one of the factors at a time, effectively splitting the problem in two parts.  The Equation 8 and 9 show the two subproblems.\\
+\begin{equation}
+	Show 2 equations for solving Y=AB+W
+\end{equation}
+The fixed factor and the estimated factor alternate roles from one iteration to the other until the solution converges.  Since the Frobenius norm is the sum of squares of all matrix entries, we can approximate A in Eq. 8 by linear least squares.  
+
+$
+A ~= YB(BTB)^{-1}	(10)
+$
+
+Conversely,
+$	B ~= YTA(ATA)^{-1}	(11) $
+
+Initialize A and B with random positive entries
+While || Y – ABT ||F > epsilon
+Anext = YB(BTB)-1 ;   Bnext = YTA(ATA)-1
+Zero-out negative entries
+Scale rows of Bnext so its elements add up to one.
+A=Anext ;  B=Bnext
+
+\subsection{Hierarchical Alternating Least Squares}
+Hierarchical alternating least squares (HALS) partitions the NMF optimization problem even more by updating only one column of A or B at each step.  The objective functions for HALS take the following form:
+Eq.(12)
+Where ... and Eq. (12) is convex for ||br||F != 0.  Taking into account non-negativity constraints and the gradients of the cost function with respect to vectors ar and br, [Cichocki-2007] derives the following rules of the form:
+(13)
+(14)
+This approach is further discussed in [19] under a comprehensive framework based on block coordinate descent (BCD) that can be extended to tensor factorizations where low-rank approximations are useful.
+
+\subsection{Multiplicative Update}
+Multiplicative update (MU) is introduced by [14].   Update rules for MU are as follows:
+(15)
+)	(16)
+where operators  and “(         )/(      )” represent are element-wise multiplication and division of matrices with the same dimensions.
+As opposed to the previous methods, MU ensures intermediate results are always positive since it applies only multiplications in its rule updates.
+
+\section{Higher Order Nonnegative Tensor Decompositions}
+Non-negative tensor decompositions (NTF) have been used in the same fields as NMF as they extend the concept of low-rank representation to higher orders.  It can be used for similar ends such as unsupervised separation of unknown mixtures of speech, face recognition, and detecting communities in social networks.  See [20] and references therein.  It has also been recently used for multilinear blind spectral signal unmixing in [21], and [5].  Several models for tensor decomposition exist and the most common are described in subsequent sections.  We will use the following definitions and notation throughout.
+A tensor is a multidimensional array.  An \textit{N}-way or \textit{N}$^{th}$ order tensor is an element of the tensor product of \textit{N} vector spaces.  A vector is an order-1 tensor, a matrix is an order-2 tensor, and anything higher than 2 is deemed a high order tensor [22].
+Let 
+$\mathbcal{G} \in \mathbb{R}^{
+	R_1 \times R_2 \times\cdots\times R_N
+}$
+be an order-N tensor where $R_n$ is the size of the $n^{th}$ dimension of $\mathbcal{G}$.  The notation and properties listed below will be used to express tensor decomposition.\\
+$\mathcal{ABCDEFGHIJKLMNOPQRSTUVWXYZ}$\\
+$\mathbcal{ABCDEFGHIJKLMNOPQRSTUVWXYZ}$\\
+$\mathscr{ABCDEFGHIJKLMNOPQRSTUVWXYZ}$\\
+$\mathbscr{ABCDEFGHIJKLMNOPQRSTUVWXYZ}$\\
+Fibers: 	A mode-n fiber is a column vector defined by fixing every index except those for n.  The n-mode fibers of tensor G E I×J×K are depicted in Figure 3.
+
+Mode-1		Mode-2	Mode-3
+
+Figure 3.  Fibers for a 3-way tensor G [22].
+
+Matrization $\mathbf{G}_{(n)}$:	The mode-n matrization, also known as unfolding, reorders elements of an $N$-way array $\mathbscr{G}$ into a matrix where the mode-n fibers become the columns G(n).  If G E I×J×K, then the mode-1 matrization yields G(1) E I×JK.  Similarly G(2) E J×IK and G(3) E K×IJ.
+Mode Product ×n :	The n-mode product of G and A E $ R^(I×R_n )$ yields a tensor Y = G ×n A such that $Y E R^....$  The mode-n product can also be expressed in terms of the n-mode matrization such that:
+\begin{equation}
+	Y = G ×n A  ==  Y(n) = AG(n)
+\end{equation}
+Outer Product o :	Just as the outer product of 2 vectors yields a rank-1 matrix, the outer product of n vectors yields a rank-1, n-way tensor.  For example: X = a o b o c  is a rank-1 tensor with elements xijk = ai bj ck . 
+
+\section{Tucker Decomposition}
+The Tucker decomposition [23] is an n-way analog to principal component analysis (PCA).  An N-way tensor $Y E R^(I_1×I_2×…×( I)_N )$ decomposed as
+\begin{equation}
+	Y=G×1A(1)×2 A(2)×NA(N)
+\end{equation}
+where $A(n) E R^(I_n×R_n )$ is the mode-n factor matrix and G E $R^(R_1×R_2×…×(R)_N )$ is the core tensor reflecting interactions.  Figure 4 shows a visualization of Tucker decomposition.
+
+Figure 4. Visualization of a 3-way tensor Tucker decomposition. [22]
+
+\section{Canonical Polyadic Decomposition}
+When the core tensor G of the Tucker decomposition has all dimensions of the same size and it is also diagonal, this case is called canonical polyadic decomposition (CPD) [15].  It is also known as CANDECOMP and parallel factorization (PARAFAC) [24].   In CPD, a tensor is represented as a sum of rank-1 terms as shown on Eq. (18).
+(18)
+In this formulation, the minimum R that makes the solution exact is the rank of tensor Y.
+
+Figure 5.  CP decomposition of a 3-way tensor X showing R sums of  outer products [22]
+As opposed to the Tucker decomposition, the CPD is said to be free of rotation ambiguity under mild conditions [17] which implies it is unique under said conditions.
+
+\section{Block Term Decomposition}
+
+\section{Parallel Computational Platforms and Implementations}
+High-performance computing has benefited from exponential advances brought by Moore’s law.  Graphical processor units have come a long way from their original intent of rendering 3d graphics to being used as general purpose co-processors for scientific computing particularly in bioinformatics, deep learning, and crypto mining applications.  While, Intel’s highest performance product to date, the Core i9 Extreme claims one Teraflop (1012 Floating Point Operations per Second) performance with 18 cores; NVidia’s latest GPU product, Tesla V100, claims performance in excess of 100 TFlops with 5120 vector cores and 640 “tensor” cores at its disposal [25].  In this section, we look at the recent use of parallel implementations using distributed computing, multi-core CPUs, and GPUs.
+In [26], an algorithm for hyperspectral image (HSI) unmixing that optimizes for sparsity is implemented on an NVidia C2050 GPU with 448 cores.  Performance is compared against an OpenMPI implementation on a 2 CPU, 8 core architecture, and a baseline serial implementation.  Results show a 4 times improvement for the multicore CPU implementation and 20 times improvement for the GPU implementation.
+In [8], a framework for NMF is implemented on a distributed system using Open MPI.  A variety of algorithms are tested including ANLS, HALS, and MU.  A thorough analysis of computational and communications costs to partition the algorithms in an optimal way is presented.  Results show the framework is suitable for large problems and scales well up to 1000 processes/cores.
+In [27], the authors focus on parallel implementations of common operations optimized for sparse tensors.  Specifically, the Sparse Matricized Tensor-Times-Khatri-Rao Product (SpMTTKRP) and Sparse Tensor-Times-Matrix (SpTTM) are used for CP decomposition achieving a 15 times improvement over other libraries.
+In [10] an evaluation of the architectural differences between many-core GPUs and FPGA parallelization is discussed.  The investigation compares GPUs and FPGA implementations of a parallel algorithm for spectral unmixing under the OpenCL API.  The FPGA implementation uses OpenCL to implement the most demanding parts of the algorithm considering its fast but limited resources.  The GPU implementation is done by porting existing CUDA kernels to OpenCL.  Results on real images show the CUDA implementation baseline being faster due to a more efficient cuBLAS library than the OpenCL clBLAS.  The FPGA-OpenCL vs GPU-OpenCL results were mixed and led authors to conclude that the GPU implementation scales better with image size making GPUs more suited to large data sets.
+
+Comment on using tensorflow which optimizes matrix multiplicaiton opreations using CPU vector instruction sets that exploit instruction level parallelism (AVX, and AVX); and NVidia's CUDA libraries.   Show matrix multiplication performance comparisons between 4 core Intel i7 7700, AMD Ryzen.
+
+\section{Hyperspectral Datasets}
+
+
+% chapter3
+%==========================================================================
+\chapter{Exploratory Analysis of Matrix and Tensor Factorization on Hyperspectral Images} % En Mayusculas (In Caps)
+\section{CPD on Indian Pines}
+Tensor Toolbox - kolda
+\section{CPD on Jasper Ridge}
+	Low energy source would fall on the same range as noise and do not get identified as a component.  Since the principal metric for endmember similarity is SAM, the scaling of the spectral signature is not as important as the shape.  Based on that we normalize the pixel by dividing it over its max value such that $y' = \frac{y}{max(y)}$ 
+\section{Clustering with Spectral Angle }
+	MaxCorrelation Difference - Select the most different candidate 1st
+	
+\section{(L,L,1)-rank of Jasper Ridge}
+non-linear least squares solved by stocastic gradient descent
+TensorLab - Sorber
+Time constraints, limited optimizer
+
+\section{Low Rank Decomposition using TensorFlow}
+short explanation on how tensorflow works
+use of machine learning keras package with ADAM optimizer
+use of Gorot initialization and implementation of factors 
+
+\chapter{Spatial Low Rank factorization for hyperspectral image unmixing}
+System level view: Preprocessing, Initialization, Decomposition, Spatial-Spectral Thresholding, 
